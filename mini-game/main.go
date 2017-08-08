@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -24,9 +25,30 @@ type Paladin struct {
 	Stat Stat
 }
 
-// func (p *Person) Talk() {
-// 	fmt.Println("Hi, my name is", p.Name)
-// }
+type Monster struct {
+	Person
+	Stat Stat
+}
+
+func (p *Person) Talk() {
+	fmt.Println("Hi, my name is", p.Name)
+}
+
+func (p *Person) updateEtatPersoGame(fileName string) {
+	b, error := json.Marshal(p)
+	if error != nil {
+		fmt.Println(error)
+		return
+	}
+	fmt.Println(string(b))
+	file, err := os.Create("./files/" + fileName + ".json")
+	if err != nil {
+		// handle the error here
+		return
+	}
+	defer file.Close()
+	file.WriteString(string(b))
+}
 
 func main() {
 	fmt.Println("Bonjour")
@@ -69,4 +91,22 @@ func newPartie() {
 	}
 	defer file.Close()
 	file.WriteString(string(b))
+}
+
+func continuePartie() {
+	fmt.Println("Choisir qui atk : ")
+
+	file, e := ioutil.ReadFile("./files/ennemy.json")
+	if e != nil {
+		fmt.Println("File error:", e)
+		os.Exit(1)
+	}
+	keysBody := []byte(string(file))
+	var data []Monster
+	err := json.Unmarshal(keysBody, &data)
+	if err != nil {
+		panic(err)
+	}
+	// for _, value := range data {
+	// }
 }
