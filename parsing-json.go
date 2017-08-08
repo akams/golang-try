@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"reflect"
 )
 
@@ -13,7 +15,13 @@ type Person struct {
 }
 
 func main() {
-  	keysBody := []byte(`[{"name": "sam", "age": 27, "details": {"salary":10000} }, {"name": "john", "age": 31, "details": {"salary":12000} }]`)
+	file, e := ioutil.ReadFile("./config.json")
+	if e != nil {
+		fmt.Println("File error:", e)
+		os.Exit(1)
+	}
+	fmt.Println(string(file))
+  	keysBody := []byte(string(file))
 	var data []Person
  
 	/*json.Unmarshal is used when the input is []byte*/
