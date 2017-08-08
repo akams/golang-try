@@ -11,18 +11,36 @@
     }
   },
   {
-    "id": 2,
-    "title": "Team",
-    "url": "/team"
+    "Name": "Monstre-A",
+    "Lvl": 1,
+    "Exp": 25,
+    "Stat": {
+      "Str": 5, 
+      "Hp": 9, 
+      "Def": 9, 
+      "Mana": 3
+    }
   },
   {
-    "id": 3,
-    "title": "Projects",
-    "url": "/projects"
+    "Name": "Monstre-B",
+    "Lvl": 1,
+    "Exp": 25,
+    "Stat": {
+      "Str": 5, 
+      "Hp": 9, 
+      "Def": 9, 
+      "Mana": 3
+    }
   },
   {
-    "id": 4,
-    "title": "Hire Us",
-    "url": "/hire-us"
+    "Name": "Monstre-C",
+    "Lvl": 1,
+    "Exp": 25,
+    "Stat": {
+      "Str": 5, 
+      "Hp": 9, 
+      "Def": 9, 
+      "Mana": 3
+    }
   }
 ]
