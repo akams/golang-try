@@ -7,49 +7,6 @@ import (
 	"os"
 )
 
-type Person struct {
-	Name string
-	Lvl  int
-	Exp  float64
-}
-
-type Stat struct {
-	Str  int
-	Hp   int
-	Def  int
-	Mana int
-}
-
-type Paladin struct {
-	Person
-	Stat Stat
-}
-
-type Monster struct {
-	Person
-	Stat Stat
-}
-
-func (p *Person) Talk() {
-	fmt.Println("Hi, my name is", p.Name)
-}
-
-func (p *Person) updateEtatPersoGame(fileName string) {
-	b, error := json.Marshal(p)
-	if error != nil {
-		fmt.Println(error)
-		return
-	}
-	fmt.Println(string(b))
-	file, err := os.Create("./files/" + fileName + ".json")
-	if err != nil {
-		// handle the error here
-		return
-	}
-	defer file.Close()
-	file.WriteString(string(b))
-}
-
 func main() {
 	fmt.Println("Bonjour")
 	fmt.Println("Voulez-vous lancer le jeux ? (o/n)")
@@ -59,14 +16,14 @@ func main() {
 	for inputLaunchGame != "n" && inputExitGame {
 		fmt.Println("Voulez-vous lancer une nouvelle partie ? (1)")
 		fmt.Println("Voulez-vous lancer une continué une partie ? (2)")
-		fmt.Println("Voulez-vous quittez la partie ? (3)")
+		fmt.Println("Voulez-vous quittez le jeux ? (3)")
 		var inputMenuGame int
 		fmt.Scanf("%d", &inputMenuGame)
 		switch inputMenuGame {
 		case 1:
 			newPartie()
 		case 2:
-			fmt.Println("Two")
+			continuePartie()
 		default:
 			inputExitGame = false
 		}
@@ -94,19 +51,89 @@ func newPartie() {
 }
 
 func continuePartie() {
-	fmt.Println("Choisir qui atk : ")
+	menuInGame()
+}
 
+func menuInGame() {
+	var inputExitMenu bool = true
+	for inputExitMenu {
+		person := loadPerson()
+		monsters := loadMonster()
+		fmt.Println("Lancer une attaque ? (1)")
+		fmt.Println("Prendre des soins ? (2)")
+		fmt.Println("Voir mes stat (3)")
+		fmt.Println("Quitter la partie ? (4)")
+		var input int
+		fmt.Scanf("%d", &input)
+		switch input {
+		case 1:
+			launchFight(person, monsters)
+		case 2:
+			healPerso(person)
+		case 3:
+			displayStat(person)
+		default:
+			inputExitMenu = false
+		}
+	}
+}
+
+func launchFight(person Paladin, monsters []Monster) {
+	fmt.Println("Choisir qui atk : ")
+	for _, value := range monsters {
+		fmt.Println("Name: ", value.Name, "Lvl: ", value.Lvl, "HP:", value.Stat.Hp)
+	}
+	fmt.Println("saisir le nom de votre adversaire: ")
+	var inputName string
+	fmt.Scanf("%s", &inputName)
+	en := search(inputName, monsters)
+	person.Attaque(en, monsters)
+}
+
+func healPerso(person Paladin) {
+	fmt.Println("==personnage==", person.Name, " - ", person.getHp(), "HP")
+	person.setHp(person.getHp() + 3)
+	fmt.Println("==Le personnage==", person.Name, "récupère:", 3, "HP")
+	fmt.Println("==Le personnage==", person.Name, "à", person.getHp(), "HP")
+	person.UpdateEtatPersoGame()
+}
+
+func displayStat(person Paladin) {
+	fmt.Println("Nom:", person.Name, " - Lvl:", person.getLvl(), " - Exp:", person.getExp())
+	fmt.Println("str:", person.getStr(), " - mana:", person.getMana())
+	fmt.Println("hp:", person.getHp(), " - def:", person.getDef())
+}
+
+func loadPerson() Paladin {
+	fmt.Println("==Chargement du personnage==")
+	filePerson, e := ioutil.ReadFile("./files/myperson.json")
+	if e != nil {
+		fmt.Println("File error:", e)
+		os.Exit(1)
+	}
+	keysBodyPerso := []byte(string(filePerson))
+	var dataPerso Paladin
+	error := json.Unmarshal(keysBodyPerso, &dataPerso)
+	if error != nil {
+		panic(error)
+	}
+	fmt.Println("==Fin Chargement du personnage==")
+	return dataPerso
+}
+
+func loadMonster() []Monster {
+	fmt.Println("==Chargement des ennemies==")
 	file, e := ioutil.ReadFile("./files/ennemy.json")
 	if e != nil {
 		fmt.Println("File error:", e)
 		os.Exit(1)
 	}
 	keysBody := []byte(string(file))
-	var data []Monster
-	err := json.Unmarshal(keysBody, &data)
+	var dataMonster []Monster
+	err := json.Unmarshal(keysBody, &dataMonster)
 	if err != nil {
 		panic(err)
 	}
-	// for _, value := range data {
-	// }
+	fmt.Println("==Fin Chargement des ennemies==")
+	return dataMonster
 }
