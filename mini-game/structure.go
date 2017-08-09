@@ -22,3 +22,13 @@ type Monster struct {
 	Person
 	Stat Stat
 }
+
+type Wizard struct {
+	Person
+	Stat
+}
+
+type Warrior struct {
+	Person
+	Stat
+}
